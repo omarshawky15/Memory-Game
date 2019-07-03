@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css" id="background">
+        .entry {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.8;
+            position: absolute;
+            top: 35%;
+            left: 30%;
+            color: red;
+            font-size: 25px;
+            color: yellow;
+            background: url("photos/bg3.png") center no-repeat;
+
+            background-size: cover;
+            padding: 10px;
+        }
+
+        .no {
+            width: 70px
+        }
+
+        .time {
+            position: fixed;
+            top: 35%;
+            left: 10%;
+            color: red;
+            font-size: 30px;
+        }
+
+        .game {
+            position: absolute;
+            top: 35%;
+            left: 30%;
+        }
+
+        .solve {
+            position: fixed;
+            left: 18%;
+            TOP : 45%;
+        }
+
+        img {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+
+        }
+        .copy{
+            position: fixed;
+            bottom: 0%;
+            left : -1px;
+            font-size: 20px;  
+            border : 1px black;
+            border-style: solid none none none ;   
+            width: 100%;   }
+    </style>
+
+</head>
+
+<body>
+    <form onsubmit=" return false;" class="entry">
+        Enter your name : <input type="text" id="name" maxlength="15"> <br />
+        Enter number of cards : <input type="number" id="no" class="no"> <br />
+        Choose a difficulty :
+        <input type="radio" name="difficulty" value="Easy"> Easy
+        <input type="radio" name="difficulty" value="Hard"> Hard
+        <input type="radio" name="difficulty" value="Nightmare"> Nightmare
+        <br />
+        <input type="submit" id="submit"></form>
+    <div>
+        <img src="photos/logo.png" alt="logo" id="logo" width=760 height=240>
+
+    </div>
+    <form id="game" onsubmit=" return false;" class="game"></form>
+
+    <form id="time" onsubmit="return false;" class="time"> </form>
+
+    <form id="solveform" onsubmit="return false" class="solve"></form>
+    <div class="copy"><pre>
+  © Copyrights 2018-2019 Omar - MoSaad Csed22  </pre> 
+            </div>
+
+
+
+    <script type="text/javascript">
+        var d = document.getElementsByName("difficulty");
+        var w = document.getElementById("name");
+        var x = document.getElementById("submit");
+        var y = document.getElementById("no");
+        var bg = document.getElementById("background");
+        var back = start();
+        var n, dValue = 0;
+        var visited = new Array();
+        var cardList = new Array();
+        var pCounter, p1 = -1, p2 = -1;
+        var i1, i2;
+        var tCounterSec = 0, tCounterMin = 0, tDiffSec = 0, tDiffMin = 0;
+        var setId, name;
+        function start() {
+            var bg = document.getElementById("background");
+            bg.append("body{background: url('photos/bg1.png') no-repeat;" +
+                "background-size : cover;   }");
+        }
+        function img_no() {
+            var no = Math.floor(Math.random() * (n / 2));
+            while (visited[no] > 1) {
+                no = Math.floor(Math.random() * (n / 2));
+            }
+            visited[no]++;
+            return no;
+        }
+
+        x.onclick = function () {
+            //adjusting timer
+            name = w.value;
+            if (name == "") name = "Anonymous";
+            if (d[0].checked) dValue = 10;
+            else if (d[1].checked) dValue = 7;
+            else if (d[2].checked) dValue = 5;
+            if (dValue == 0 || y.value == "") window.location.reload();
+            timeNow(y.value * dValue);
+            n = (y.value) * 2; pCounter = (y.value);
+            var j = -1, k = Math.round(Math.sqrt(n));
+            x.parentNode.parentNode.removeChild(x.parentNode);
+            // adjust background
+            document.getElementById("logo").style.left = "25%";
+            bg.append("body{background: url('photos/bg2.jpg') no-repeat;" +
+                "background-size : cover;   }");
+            for (var i = 0; i < n / 2; i++)visited[i] = 0;
+            for (var i = 0; i < n; i++) {
+                if (i % k == 0) j++;
+                //creating button and adjust attributes
+                var butt = document.createElement("button");
+                var text = "a" + i;
+                butt.setAttribute("id", text);
+                var img = img_no();
+                butt.setAttribute("value", img);
+                cardList["a" + i] = img;
+                butt.onclick = function () { click(this.id, this.value); };
+                //adjust button style
+                butt.style.transition = "all 0.5s ease-in-out";
+                butt.style.background = "url('photos/default.jpg') center no-repeat";
+                butt.style.position = "absolute";
+                butt.style.top = (100 * j) + "px";
+                butt.style.left = 100 * (i - j * k) + "px";
+                butt.style.height = "100px";
+                butt.style.width = "100px";
+                //add the button to the form
+                var fuck = document.getElementById("game");
+                fuck.append(butt);
+            }
+            //adding Solve
+            var butt2 = document.createElement("button");
+            var fuck = document.getElementById("solveform");
+            butt2.setAttribute("id", "solve");
+            butt2.value = "Solve";
+            butt2.onclick = function () { solveAll(); };
+            butt2.style.position = "absolute";
+            butt2.innerHTML = "Solve";
+            butt2.style.height = "50px";
+            butt2.style.width = "50px";
+            fuck.append(butt2);
+        }
+
+        function click(i, img) {
+            var z = document.getElementById(i);
+            if (p2 != -1) return;
+            else if (p1 == -1 && cardList[i] != -1) {
+                p1 = img; i1 = i;
+                z.style.transform = "rotateZ(360deg)";
+                var text = "url('photos/1(" + img + ").jpg') center no-repeat";
+                z.style.background = "url('photos/" + img + ".jpg') center no-repeat";
+            }
+            else if (i1 == i) return;
+            else if (p2 == -1 && cardList[i] != -1) {
+                z.style.transform = "rotateZ(360deg)";
+                var text = "url('photos/" + img + ".jpg') center no-repeat";
+                z.style.background = "url('photos/" + img + ".jpg') center no-repeat";
+                p2 = img; i2 = i;
+                var timeOut = setTimeout(function () {
+                    if (p1 == p2) {
+                        pCounter--;
+                        cardList[i1] = -1;
+                        cardList[i2] = -1;
+                    }
+                    else if (p1 != p2) {
+
+                        z = document.getElementById(i1);
+                        z.style.transform = "rotateZ(0deg)";
+                        z.style.background = "url('photos/default.jpg') center no-repeat";
+                        z = document.getElementById(i2);
+                        z.style.transform = "rotateZ(0deg)";
+                        z.style.background = "url('photos/default.jpg') center no-repeat";
+                    }
+                    p1 = -1; p2 = -1;
+                    if (pCounter > 0) return;
+                    else {
+                        store("Won");
+                    }
+                }, 750)
+            }
+            else return;
+        }
+        function store(WOL) {
+            var iLocal = window.localStorage.getItem("i");
+            var Score = Math.round((tCounterMin * 60 + tCounterSec) * n / dValue);
+            var dtext;
+            if (dValue == 10) dtext = "Easy-Noob";
+            else if (dValue == 7) dtext = "Hard-hmm :\\";
+            else if (dValue == 5) dtext = "Nightmare-Pro";
+            if (iLocal == null) iLocal = 0;
+            window.localStorage.setItem("name" + iLocal, name);
+            window.localStorage.setItem("score" + iLocal, Score);
+            window.localStorage.setItem("wl" + iLocal, WOL);
+            window.localStorage.setItem("tt" + iLocal, tCounterMin + ":" + tCounterSec);
+            window.localStorage.setItem("diff" + iLocal, dtext);
+            window.localStorage.setItem("no" + iLocal, n / 2);
+            iLocal++;
+            window.localStorage.setItem("i", iLocal);
+            clearInterval(setId);
+            document.location.assign("Page 2(Scores).html");
+        }
+        function timeNow(diff) {
+            tDiffSec = diff;
+            while (tDiffSec > 60) {
+                tDiffSec -= 60;
+                tDiffMin++;
+            }
+            setId = setInterval(function () { timer(setId, diff); }, 1000);
+        }
+        function timer(setId, diff) {
+            tCounterSec++;
+            if (tCounterSec == 60) tCounterMin++ , tCounterSec = 0;
+            tDiffSec--;
+            if (tDiffMin == 0 && tDiffSec == 0) {
+                store("Lost");
+            }
+            var para = document.forms[1];
+            para.innerHTML = "Timer : " + tCounterMin + " : " + tCounterSec +
+                "<br \>" + "Time Remaining : " + tDiffMin + " : " + tDiffSec;
+            if (tDiffSec == 0 && tDiffMin > 0) {
+                tDiffSec = 60, tDiffMin--;
+            }
+        }
+        function clock() {
+            var d = new Date();
+            var para = document.forms[1];
+            para.innerHTML = "Time :" + Math.abs(12 - d.getHours()) + ":" + d.getMinutes() + ":" + d.getSeconds();
+
+        }
+        function solveAll() {
+            clearInterval(setId);
+            for (var i = 0; i < n; i++) {
+                var z = document.getElementById("a" + i);
+                z.style.transform = "rotateZ(360deg)";
+                z.style.background = "url('photos/" + z.value + ".jpg') center no-repeat";
+                cardList["a" + i] = -1;
+            }
+            //adding play again
+            var butt2 = document.getElementById("solve");
+            var fuck = document.getElementById("solveform");
+            butt2.parentNode.removeChild(butt2);
+            butt2 = document.createElement("button");
+            butt2.setAttribute("id", "playagain");
+            butt2.value = "Play Again";
+            butt2.onclick = function () { window.location.reload(); };
+            butt2.style.position = "absolute";
+            butt2.style.height = "50px";
+            butt2.style.width = "50px";
+            butt2.innerHTML = "Play Again";
+            fuck.append(butt2);
+        }
+    </script>
+</body>
+
+</html>

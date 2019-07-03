@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style type="text/css">
+        body {
+            background: url('photos/bg2.jpg') no-repeat;
+            background-size: cover;
+        }
+
+        .lose {
+            position: absolute;
+            left: 35%;
+            top: 31%
+        }
+
+        .p {
+            color: purple;
+        }
+
+        .r {
+            color: red;
+        }
+
+        .g {
+            color: darkgreen;
+        }
+
+        .o {
+            color: deeppink;
+        }
+
+        .b {
+            color: blue;
+        }
+
+        img {
+            position: absolute;
+            left: 25%;
+            top: 0px;
+        }
+        .copy{
+            position: absolute;
+            bottom: 0%;
+            left : -1px;
+            font-size: 20px;  
+            border : 1px black;
+            border-style: solid none none none ;   
+            width: 100%;   }
+    </style>
+</head>
+
+<body>
+    <div>
+        <img src="photos/logo.png" alt="logo" id="logo" width=760 height=240>
+
+    </div>
+    <form id="lose" class="lose">
+        <table id="Scores" border="1" class>
+            <tr>
+                <td>
+                    Name
+                </td>
+                <td>
+                    No.of.Cards
+                </td>
+                <td>
+                    difficulty
+                </td>
+                <td>
+                    score
+                </td>
+                <td>
+                    Time Taken
+                </td>
+                <td>
+                    Win/Lose
+                </td>
+            </tr>
+        </table>
+        <input type="button" id="reset" onclick="window.localStorage.clear() , document.location.reload();"
+            value="Reset Scores">
+        <input type="button" id="playAgain" onclick="document.location.assign('Page 1(The Game).html')"
+            value="Play Again">
+    </form>
+<div class="copy"><pre>
+&#9       © Copyrights 2018-2019 Omar - MoSaad Csed22  </pre> 
+</div>
+    <script type="text/javascript">
+
+        var runner = l();
+        function l() {
+            var y = document.getElementById("Scores");
+            var iLocal = window.localStorage.getItem("i");
+            if (iLocal == null) iLocal = 0;
+            for (var i = 0; i < iLocal; i++) {
+                var name = window.localStorage.getItem("name" + i);
+                var Score = window.localStorage.getItem("score" + i);
+                var wL = window.localStorage.getItem("wl" + i);
+                var difficulty = window.localStorage.getItem("diff" + i);
+                var Time = window.localStorage.getItem("tt" + i);
+                var no = window.localStorage.getItem("no" + i);
+                var color1, color2;
+                if (wL == "Won") color1 = "class='g'";
+                else if (wL == "Lost") color1 = "class='r'";
+                if (difficulty == "Easy-Noob") color2 = "class='o'";
+                else if (difficulty == "Hard-hmm :\\") color2 = "class='r'";
+                else if (difficulty == "Nightmare-Pro") color2 = "class='p'";
+                y.innerHTML = (y.innerHTML + "<tr><td class='b'>" + name + "</td><td>" + no + "</td><td " + color2 + ">" + difficulty +
+                    "</td><td>" + Score + "</td><td>" + Time + "</td><td " + color1 + ">" + wL + "</td></tr>");
+            }
+        }
+    </script>
+</body>
+
+</html>
